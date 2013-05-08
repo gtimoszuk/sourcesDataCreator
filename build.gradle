@@ -7,7 +7,7 @@ project.ext.version = "0.1"
 
         
 dependencies {
-        testCompile junitDep
+    testCompile junitDep
 
 	compile groovyDep
 	compile asmDep
@@ -16,6 +16,10 @@ dependencies {
 	compile opencsvDep
 	compile slf4jApiDep
 	compile logbackClassicDep
+	compile blueprintsNeo4jDep
+	compile blueprintsCoreDep
+	compile gremlinGroovyDep
+	compile gremlinJavaDep
 }
         
 repositories {
