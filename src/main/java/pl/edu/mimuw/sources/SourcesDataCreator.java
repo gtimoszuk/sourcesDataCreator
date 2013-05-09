@@ -12,6 +12,12 @@ import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.neo4j.Neo4jGraph;
 
+/**
+ * not working to be removed soon
+ * 
+ * @author gtimoszuk
+ * 
+ */
 public class SourcesDataCreator {
 
 	private static final String KEY = "KEY";
