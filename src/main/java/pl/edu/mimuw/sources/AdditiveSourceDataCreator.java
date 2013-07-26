@@ -45,7 +45,7 @@ public class AdditiveSourceDataCreator {
 
 	private final Set<Vertex> packages = new HashSet<Vertex>();
 
-	private final Map<Vertex, Vertex> classPackage = new HashMap<Vertex, Vertex>();
+	private final Map<Vertex, Vertex> childAndParent = new HashMap<Vertex, Vertex>();
 
 	public void createData(String path, String outPath) throws IOException {
 		Map<String, String> configuration = new HashMap<String, String>();
@@ -69,13 +69,17 @@ public class AdditiveSourceDataCreator {
 		Writer entitiesWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(entitiesPath)));
 		Writer edgesWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(edgesPath)));
 
+		Set<String> packagesNames = new HashSet<String>();
 		for (Vertex v : packages) {
-			packagesWriter.append((String) v.getProperty(KEY));
+			packagesNames.add((String) v.getProperty(KEY));
+		}
+		for (String s : packagesNames) {
+			packagesWriter.append(s);
 			packagesWriter.append("\n");
 		}
 		packagesWriter.close();
 
-		for (Entry<Vertex, Vertex> e : classPackage.entrySet()) {
+		for (Entry<Vertex, Vertex> e : childAndParent.entrySet()) {
 			entitiesWriter.append((String) e.getKey().getProperty(KEY));
 			entitiesWriter.append(" ");
 			entitiesWriter.append((String) e.getValue().getProperty(KEY));
@@ -141,7 +145,7 @@ public class AdditiveSourceDataCreator {
 			}
 		}
 
-		for (Entry<Vertex, Vertex> e : classPackage.entrySet()) {
+		for (Entry<Vertex, Vertex> e : childAndParent.entrySet()) {
 			LOGGER.trace("class {} package {}", e.getKey().getProperty(KEY), e.getValue().getProperty(KEY));
 		}
 
@@ -153,21 +157,20 @@ public class AdditiveSourceDataCreator {
 		LOGGER.info("call count: {}", count);
 		LOGGER.info("map size: {}", callCount.size());
 		LOGGER.info("packages count: {}", packages.size());
-		LOGGER.info("class count: {}", classPackage.size());
+		LOGGER.info("class count: {}", childAndParent.size());
 
 	}
 
 	private Vertex findPackage(Vertex inVertex) {
 		Vertex result = null;
 		LOGGER.trace("finding package for {}", inVertex.getProperty(KEY));
-		for (Edge inEgde : inVertex.getEdges(IN, new String[] {})) {
-			if (CONTAINS_EDGE.equals(inEgde.getLabel())) {
-				if (PACKAGE.equals(inEgde.getVertex(OUT).getProperty(TYPE_PROPERTY))) {
-					result = inEgde.getVertex(OUT);
-					LOGGER.trace("Package: {}", inEgde.getVertex(OUT).getProperty(KEY));
-					packages.add(result);
-					classPackage.put(inVertex, result);
-				}
+		for (Edge inEgde : inVertex.getEdges(IN, new String[] { CONTAINS_EDGE })) {
+			if (PACKAGE.equals(inEgde.getVertex(OUT).getProperty(TYPE_PROPERTY))) {
+				result = inEgde.getVertex(OUT);
+				LOGGER.trace("Package: {}", inEgde.getVertex(OUT).getProperty(KEY));
+				packages.add(result);
+				addPackageParent(result);
+				childAndParent.put(inVertex, result);
 			}
 		}
 		if (result == null) {
@@ -175,5 +178,19 @@ public class AdditiveSourceDataCreator {
 			LOGGER.info("NO PACKAGE FOUND!!!!!!");
 		}
 		return result;
+	}
+
+	private void addPackageParent(Vertex inVertex) {
+		Vertex result = null;
+		for (Edge inEgde : inVertex.getEdges(IN, new String[] { CONTAINS_EDGE })) {
+			if (PACKAGE.equals(inEgde.getVertex(OUT).getProperty(TYPE_PROPERTY))) {
+				result = inEgde.getVertex(OUT);
+				if (!packages.contains(result)) {
+					packages.add(result);
+					childAndParent.put(inVertex, result);
+					addPackageParent(result);
+				}
+			}
+		}
 	}
 }

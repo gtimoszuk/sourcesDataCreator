@@ -31,7 +31,35 @@ public class AdditiveSourceDataCreatorTest {
 	public void hibernateORMTest() throws IOException {
 		AdditiveSourceDataCreator creator = new AdditiveSourceDataCreator();
 		creator.createData("/home/ballo0/GTI/projects/testDataCreatorData/hibernate-orm",
-				"/home/ballo0/GTI/projects/testDataCreatorResults/hibernate-orm/");
+				"/home/ballo0/GTI/projects/testDataCreatorResults/hibernateOrm/");
+	}
+
+	@Test
+	public void gephiMaventTest() throws IOException {
+		AdditiveSourceDataCreator creator = new AdditiveSourceDataCreator();
+		creator.createData("/home/ballo0/GTI/projects/testDataCreatorData/gephi-maven",
+				"/home/ballo0/GTI/projects/testDataCreatorResults/gephiMaven/");
+	}
+
+	@Test
+	public void jmeterTest() throws IOException {
+		AdditiveSourceDataCreator creator = new AdditiveSourceDataCreator();
+		creator.createData("/home/ballo0/GTI/projects/testDataCreatorData/jmeter",
+				"/home/ballo0/GTI/projects/testDataCreatorResults/jmeter/");
+	}
+
+	@Test
+	public void tedTest() throws IOException {
+		AdditiveSourceDataCreator creator = new AdditiveSourceDataCreator();
+		creator.createData("/home/ballo0/GTI/projects/testDataCreatorData/ted",
+				"/home/ballo0/GTI/projects/testDataCreatorResults/ted/");
+	}
+
+	@Test
+	public void jackrabbitTest() throws IOException {
+		AdditiveSourceDataCreator creator = new AdditiveSourceDataCreator();
+		creator.createData("/home/ballo0/GTI/projects/testDataCreatorData/jackrabbit",
+				"/home/ballo0/GTI/projects/testDataCreatorResults/jackrabbit/");
 	}
 
 }
